@@ -1,0 +1,50 @@
+name: Dart (Build & Release)
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    name: Build & Release APK of LifeStack
+    runs-on: macos-latest
+
+    steps:
+      # ⬇️ Checkout source
+      - uses: actions/checkout@v3
+
+      # ⬇️ Setup Java (Android)
+      - uses: actions/setup-java@v3
+        with:
+          distribution: zulu
+          java-version: 17
+
+      # ⬇️ Setup Flutter
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          architecture: x64
+
+      # ⬇️ Install dependencies
+      - name: Install dependencies
+        run: flutter pub get
+
+      # 🔵 Build Android APK
+      - name: Build Android APK
+        run: flutter build apk --release --split-per-abi
+
+      # 🔵 Build iOS (disabled)
+      # - name: Build iOS IPA
+      #   run: flutter build ipa --release
+
+      # 🔵 Release to GitHub
+      - name: Push to GitHub Release
+        uses: ncipollo/release-action@v1
+        with:
+          artifacts: build/app/outputs/apk/release/*
+          tag: v1.0.${{ github.run_number }}
+          token: ${{ secrets.TOKEN }}
