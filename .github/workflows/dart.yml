@@ -3,19 +3,19 @@ name: Dart (Build & Release)
 on:
   push:
     branches:
-      - main
+      - master
   pull_request:
     branches:
-      - main
+      - master
 
 jobs:
   build:
-    name: Build & Release APK of LifeStack
+    name: Build & Release APK of WeChat
     runs-on: macos-latest
 
     steps:
       # ⬇️ Checkout source
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       # ⬇️ Setup Java (Android)
       - uses: actions/setup-java@v3
@@ -47,4 +47,4 @@ jobs:
         with:
           artifacts: build/app/outputs/apk/release/*
           tag: v1.0.${{ github.run_number }}
-          token: ${{ secrets.TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}
